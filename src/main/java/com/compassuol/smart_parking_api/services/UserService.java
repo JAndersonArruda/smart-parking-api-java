@@ -19,7 +19,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<User> findAll() {
         return userRepository.findAll();
     }
@@ -31,7 +31,7 @@ public class UserService {
         );
     }
 
-    @Transactional()
+    @Transactional
     public User editPassword(Long id, String password) {
         User user = findById(id);
         user.setPassword(password);
