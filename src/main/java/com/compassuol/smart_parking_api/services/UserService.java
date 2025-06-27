@@ -1,8 +1,11 @@
 package com.compassuol.smart_parking_api.services;
 
 import com.compassuol.smart_parking_api.entities.User;
+import com.compassuol.smart_parking_api.exceptions.EntityNotFoundException;
+import com.compassuol.smart_parking_api.exceptions.UsernameUniqueViolationException;
 import com.compassuol.smart_parking_api.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +19,11 @@ public class UserService {
 
     @Transactional
     public User save(User user) {
-        return userRepository.save(user);
+        try {
+            return userRepository.save(user);
+        } catch (DataIntegrityViolationException e) {
+            throw new UsernameUniqueViolationException(String.format("User '%s' already registered.", user.getUsername()));
+        }
     }
 
     @Transactional(readOnly = true)
@@ -27,7 +34,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public User findById(Long id) {
         return userRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("User not found.")
+                () -> new EntityNotFoundException(String.format("User id=%s not found.", id))
         );
     }
 
