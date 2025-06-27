@@ -6,6 +6,7 @@ import com.compassuol.smart_parking_api.web.dto.UserCreateDto;
 import com.compassuol.smart_parking_api.web.dto.UserPasswordDto;
 import com.compassuol.smart_parking_api.web.dto.UserResponseDto;
 import com.compassuol.smart_parking_api.web.dto.mapper.UserMapper;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<UserResponseDto> create(@RequestBody UserCreateDto createDto) {
+    public ResponseEntity<UserResponseDto> create(@Valid @RequestBody UserCreateDto createDto) {
         User newUser = userService.save(UserMapper.toUser(createDto));
         return ResponseEntity.status(HttpStatus.CREATED).body(UserMapper.toDto(newUser));
     }
@@ -39,7 +40,7 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Void> updatePassword(@PathVariable Long id, @RequestBody UserPasswordDto passwordDto) {
+    public ResponseEntity<Void> updatePassword(@PathVariable Long id, @Valid @RequestBody UserPasswordDto passwordDto) {
         User upUser = userService.editPassword(id, passwordDto.getCurrentPassword(), passwordDto.getNewPassword(), passwordDto.getConfirmPassword());
         return  ResponseEntity.noContent().build();
     }
