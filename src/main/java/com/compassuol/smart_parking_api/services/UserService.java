@@ -2,6 +2,8 @@ package com.compassuol.smart_parking_api.services;
 
 import com.compassuol.smart_parking_api.entities.User;
 import com.compassuol.smart_parking_api.exceptions.EntityNotFoundException;
+import com.compassuol.smart_parking_api.exceptions.PasswordConfirmationException;
+import com.compassuol.smart_parking_api.exceptions.PasswordMismatchException;
 import com.compassuol.smart_parking_api.exceptions.UsernameUniqueViolationException;
 import com.compassuol.smart_parking_api.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -41,12 +43,12 @@ public class UserService {
     @Transactional
     public User editPassword(Long id, String currentPassword, String newPassword, String confirmPassword) {
         if (!newPassword.equals(confirmPassword)) {
-            throw new RuntimeException("New password not check confirm password.");
+            throw new PasswordConfirmationException("New password not check confirm password.");
         }
 
         User user = findById(id);
         if (!user.getPassword().equals(currentPassword)) {
-            throw new RuntimeException("Your password doesn't match.");
+            throw new PasswordMismatchException("Your password doesn't match.");
         }
 
         user.setPassword(newPassword);
